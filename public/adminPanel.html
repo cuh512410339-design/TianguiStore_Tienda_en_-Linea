@@ -19,57 +19,68 @@
   <!-- 🔝 Navbar completo -->
   <div id="navbar-container"></div>
 
-  <!-- 🧠 Panel de Administración -->
-  <main class="section" id="seccion-principal">
+  <!-- 🧠 Panel de Administración (REEMPLAZADO: nuevo layout responsive con hero y tarjetas) -->
+  <main class="section" id="seccion-principal" aria-labelledby="titulo-admin">
     <div class="container">
-      <h4 class="center-align amber-text text-accent-3">Panel de Administración</h4>
-      <p class="grey-text text-lighten-2 center-align">Selecciona una sección para comenzar</p>
+      <section class="intro-banner animate__animated animate__fadeInDown" role="region" aria-label="Panel de administración">
+        <h1 id="titulo-admin" class="intro-title">
+          <i class="fas fa-tools"></i> Panel de Administración
+        </h1>
+        <p class="flow-text grey-text text-lighten-2">
+          Accede a las secciones principales: usuarios, productos, pedidos, configuración y reportes.
+        </p>
+      </section>
 
-      <div class="row">
-
+      <section class="row" role="navigation" aria-label="Secciones administrativas" style="margin-top: 1.2rem;">
+        <!-- Tarjeta reutilizable: data-section usado por scripts para abrir hash -->
         <div class="col s12 m6 l4">
-          <a href="#dashboard" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#dashboard" aria-controls="dashboard" aria-label="Ir a Dashboard">
             <i class="fas fa-chart-line fa-2x"></i>
             <span>Dashboard</span>
-          </a>
+          </button>
         </div>
 
         <div class="col s12 m6 l4">
-          <a href="#usuarios" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#usuarios" aria-controls="usuarios" aria-label="Ir a Usuarios">
             <i class="fas fa-users fa-2x"></i>
             <span>Usuarios</span>
-          </a>
+          </button>
         </div>
 
         <div class="col s12 m6 l4">
-          <a href="#productos" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#productos" aria-controls="productos" aria-label="Ir a Productos">
             <i class="fas fa-boxes fa-2x"></i>
             <span>Productos</span>
-          </a>
+          </button>
         </div>
 
         <div class="col s12 m6 l4">
-          <a href="#pedidos" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#pedidos" aria-controls="pedidos" aria-label="Ir a Pedidos">
             <i class="fas fa-receipt fa-2x"></i>
             <span>Pedidos</span>
-          </a>
+          </button>
         </div>
 
         <div class="col s12 m6 l4">
-          <a href="#configuracion" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#configuracion" aria-controls="configuracion" aria-label="Ir a Configuración">
             <i class="fas fa-cogs fa-2x"></i>
             <span>Configuración</span>
-          </a>
+          </button>
         </div>
 
         <div class="col s12 m6 l4">
-          <a href="#reportes" class="menu-tarjeta z-depth-3">
+          <button class="menu-tarjeta z-depth-3 btn-large full-width" data-open="#reportes" aria-controls="reportes" aria-label="Ir a Reportes">
             <i class="fas fa-chart-pie fa-2x"></i>
             <span>Reportes</span>
-          </a>
+          </button>
         </div>
+      </section>
 
-      </div>
+      <hr style="margin: 2rem 0; opacity: 0.06;" />
+
+      <section id="admin-contenido" aria-live="polite" style="min-height: 18rem;">
+        <!-- Aquí el script [`mostrarSeccion`](public/scripts/admin/index.js) podrá renderizar las secciones dinámicamente -->
+      </section>
     </div>
   </main>
 

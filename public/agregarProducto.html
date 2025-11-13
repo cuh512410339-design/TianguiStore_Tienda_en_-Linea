@@ -3,144 +3,302 @@
 <!DOCTYPE html>
 <html lang="es-MX">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Añadir Producto | TianguiStore</title>
+  <title>Añadir Producto · TianguiStore</title>
 
-  <!-- MaterializeCSS -->
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet" />
-  
-  <!-- FontAwesome para íconos -->
+  <!-- Bootstrap 5 -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
+  <!-- FontAwesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-  
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="./estilo/estilos.css" />
+
+  <!-- model-viewer -->
+  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+
+  <style>
+    :root{
+      --brand:#0d6efd;
+      --muted:#6c757d;
+      --card-bg:#ffffff;
+      --bg:#f8f9fa;
+      --surface-2:#eef3ff;
+    }
+    .dark {
+      --card-bg:#0b1220;
+      --bg:#071023;
+      --muted:#9aa6b2;
+      --surface-2:#092033;
+      color-scheme: dark;
+      color: #e6eef6;
+    }
+    body{ background:var(--bg); font-family:Inter,system-ui,Arial,Helvetica,sans-serif; }
+    .card { background:var(--card-bg); border:0; box-shadow:0 6px 18px rgba(11,20,33,0.08); }
+    .drag-drop {
+      border: 2px dashed rgba(13,110,253,0.18);
+      background: linear-gradient(180deg, rgba(13,110,253,0.03), transparent);
+      padding: 1rem;
+      border-radius: .5rem;
+      text-align:center;
+      transition: background .15s, border-color .15s;
+    }
+    .drag-drop.dragover { background:var(--surface-2); border-color:var(--brand); }
+    .thumb { width:96px; height:96px; object-fit:cover; border-radius:.5rem; border:1px solid rgba(0,0,0,0.06); }
+    .preview-grid { display:flex; gap:.5rem; flex-wrap:wrap; align-items:center; }
+    .fv-error { color: #d9534f; font-size:.875rem; margin-top:.25rem; }
+    .top-controls { gap:.5rem; display:flex; align-items:center; justify-content:space-between; }
+    .small-muted{ color:var(--muted); font-size:.9rem; }
+  </style>
 </head>
-
-<body class="bg-light">
-
-  <!-- Navbar: Cargada dinámicamente -->
+<body>
   <div id="navbar-container"></div>
 
-  <!-- Contenido principal -->
-  <main class="container my-5">
-    <section class="row justify-content-center">
-      <div class="col-lg-8">
-        <h1 class="text-center mb-4">
-          <i class="fas fa-plus-circle me-2"></i> Agregar Nuevo Producto
-        </h1>
-
-        <!-- Formulario para agregar un producto -->
-        <form id="form-agregar-producto" class="card p-4 shadow-sm" enctype="multipart/form-data" novalidate>
-          <!-- Nombre del producto -->
-          <div class="input-field mb-3">
-            <i class="fas fa-tag prefix"></i>
-            <input type="text" class="form-control" id="nombre" maxlength="100" required />
-            <label for="nombre">Nombre del producto</label>
-          </div>
-
-          <!-- Descripción del producto -->
-          <div class="input-field mb-3">
-            <i class="fas fa-file-alt prefix"></i>
-            <textarea class="materialize-textarea" id="descripcion" rows="3" required></textarea>
-            <label for="descripcion">Descripción</label>
-          </div>
-
-          <!-- Precio y Stock -->
-          <div class="row g-3">
-            <div class="col-md-6">
-              <div class="input-field">
-                <i class="fas fa-money-bill-wave prefix"></i>
-                <input type="number" class="form-control" id="precio" step="0.01" min="0" required />
-                <label for="precio">Precio ($MXN)</label>
-              </div>
-            </div>
-            <div class="col-md-6">
-              <div class="input-field">
-                <i class="fas fa-boxes prefix"></i>
-                <input type="number" class="form-control" id="stock" min="0" required />
-                <label for="stock">Stock disponible</label>
-              </div>
+  <main class="container py-5">
+    <div class="row justify-content-center">
+      <div class="col-lg-9">
+        <div class="card p-4">
+          <div class="top-controls mb-3">
+            <h2 class="h4 mb-0"><i class="fa-solid fa-plus-circle me-2 text-primary"></i> Agregar Producto</h2>
+            <div class="d-flex align-items-center">
+              <button id="theme-toggle" class="btn btn-outline-secondary btn-sm me-2" title="Cambiar tema">
+                <i class="fa-regular fa-moon"></i>
+              </button>
+              <a href="#" class="btn btn-outline-primary btn-sm"><i class="fa-solid fa-list"></i> Volver a inventario</a>
             </div>
           </div>
 
-          <!-- Selección de categoría y marca -->
-          <div class="row g-3 mt-3">
+          <form id="form-agregar-producto" class="row g-3" enctype="multipart/form-data" novalidate>
+            <div class="col-md-8">
+              <label class="form-label">Nombre</label>
+              <input id="nombre" name="nombre" class="form-control" maxlength="120" required />
+              <div class="fv-error" data-for="nombre"></div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Precio (MXN)</label>
+              <input id="precio" name="precio" type="number" step="0.01" min="0" class="form-control" required />
+              <div class="fv-error" data-for="precio"></div>
+            </div>
+
+            <div class="col-12">
+              <label class="form-label">Descripción</label>
+              <textarea id="descripcion" name="descripcion" class="form-control" rows="3" required></textarea>
+              <div class="fv-error" data-for="descripcion"></div>
+            </div>
+
             <div class="col-md-6">
-              <div class="input-field">
-                <i class="fas fa-cogs prefix"></i>
-                <select class="form-select" id="categoria_id" required></select>
-                <label for="categoria_id">Categoría</label>
+              <label class="form-label">Categoría</label>
+              <select id="categoria_id" name="categoria_id" class="form-select" required>
+                <option value="">Seleccionar categoría...</option>
+              </select>
+              <div class="fv-error" data-for="categoria_id"></div>
+            </div>
+
+            <div class="col-md-6">
+              <label class="form-label">Marca</label>
+              <select id="marca_id" name="marca_id" class="form-select" required>
+                <option value="">Seleccionar marca...</option>
+              </select>
+              <div class="fv-error" data-for="marca_id"></div>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Stock</label>
+              <input id="stock" name="stock" type="number" min="0" class="form-control" value="0" required />
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label">Tipo de pago</label>
+              <select id="tipo_pago" name="tipo_pago" class="form-select" required>
+                <option value="efectivo">Efectivo</option>
+                <option value="crédito">Crédito</option>
+                <option value="débito">Débito</option>
+                <option value="transferencia">Transferencia</option>
+              </select>
+            </div>
+
+            <div class="col-md-4 d-flex align-items-center">
+              <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="publicado" name="publicado">
+                <label class="form-check-label small-muted" for="publicado">Publicar</label>
               </div>
             </div>
-            <div class="col-md-6">
-              <div class="input-field">
-                <i class="fas fa-trademark prefix"></i>
-                <select class="form-select" id="marca_id" required></select>
-                <label for="marca_id">Marca</label>
+
+            <!-- Drag & drop imágenes -->
+            <div class="col-12">
+              <label class="form-label">Imágenes del producto</label>
+              <div id="dropzone" class="drag-drop" tabindex="0">
+                <div>
+                  <i class="fa-solid fa-cloud-arrow-up fa-2x text-primary"></i>
+                  <p class="small-muted mb-0 mt-2">Arrastra imágenes aquí o <button id="btn-file-select" type="button" class="btn btn-link p-0">selecciona archivos</button></p>
+                  <small class="small-muted d-block mt-1">Se permiten múltiples imágenes. JPG/PNG | Max 5 MB por imagen.</small>
+                </div>
+                <input id="imagenes" name="imagenes" type="file" accept="image/*" multiple class="d-none" />
               </div>
+              <div id="preview-imagenes" class="preview-grid mt-3"></div>
             </div>
-          </div>
 
-          <!-- Carga de imágenes del producto -->
-          <div class="mt-3">
-            <label for="imagenes" class="form-label">Imágenes del producto</label>
-            <input type="file" class="form-control" id="imagenes" accept="image/*" multiple required />
-            <div id="preview-imagenes" class="mt-2 d-flex flex-wrap gap-2"></div>
-          </div>
+            <!-- Modelo 3D -->
+            <div class="col-12">
+              <label class="form-label">Modelo 3D (opcional)</label>
+              <input id="modelo3d" name="modelo3d" type="file" accept=".glb,.gltf,.stl,.obj,.fbx" class="form-control" />
+              <div id="preview-modelo3d" class="mt-3"></div>
+            </div>
 
-          <!-- Carga de modelo 3D (opcional) -->
-          <div class="mt-3">
-            <label for="modelo3d" class="form-label">Modelo 3D (opcional)</label>
-            <input type="file" class="form-control" id="modelo3d" accept=".glb,.gltf,.obj,.fbx,.stl" />
-            <div id="preview-modelo3d" class="mt-3"></div>
-          </div>
+            <div class="col-12 d-flex gap-2 justify-content-end">
+              <button type="reset" class="btn btn-outline-secondary">Limpiar</button>
+              <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save me-2"></i>Guardar Producto</button>
+            </div>
+          </form>
+        </div>
 
-          <!-- Tipo de pago permitido -->
-          <div class="mt-3">
-            <label for="tipo_pago" class="form-label">Tipo de pago permitido</label>
-            <select class="form-select" id="tipo_pago" required>
-              <option value="efectivo">Efectivo</option>
-              <option value="crédito">Crédito</option>
-              <option value="débito">Débito</option>
-              <option value="transferencia">Transferencia</option>
-            </select>
-          </div>
-
-          <!-- Opciones adicionales -->
-          <div class="form-check form-switch mt-4">
-            <input class="form-check-input" type="checkbox" id="publicado" />
-            <label class="form-check-label" for="publicado">¿Publicar inmediatamente?</label>
-          </div>
-
-          <div class="form-check form-switch mt-2">
-            <input class="form-check-input" type="checkbox" id="meses_sin_intereses" />
-            <label class="form-check-label" for="meses_sin_intereses">Meses sin intereses</label>
-          </div>
-
-          <!-- Botón para guardar el producto -->
-          <div class="d-grid mt-4">
-            <button type="submit" class="btn btn-primary">
-              <i class="fas fa-save me-2"></i>Guardar Producto
-            </button>
-          </div>
-        </form>
+        <!-- toasts -->
+        <div id="toast-area" class="position-fixed bottom-0 end-0 p-3" style="z-index:2000;"></div>
       </div>
-    </section>
+    </div>
   </main>
 
-  <!-- Contenedor para notificaciones tipo toast -->
-  <div id="toast-container" class="position-fixed bottom-0 end-0 p-3" style="z-index: 1056;"></div>
-
-  <!-- Footer: Cargado dinámicamente -->
   <div id="footer-container"></div>
 
-  <!-- Scripts -->
-  <script src="https://cdn.jsdelivr.net/npm/materialize@1.0.0/js/materialize.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   <script src="scripts/loadComponent.js" defer></script>
-  <script src="scripts/agregarProducto.js" defer></script>
 
-  <!-- Previsualización de modelos 3D -->
-  <script type="module" src="https://unpkg.com/@google/model-viewer/dist/model-viewer.min.js"></script>
+  <script>
+    // Simple state + helpers
+    const $ = id => document.getElementById(id);
+    const toast = (msg, type='primary') => {
+      const cont = $('toast-area');
+      const t = document.createElement('div');
+      t.className = 'toast align-items-center text-bg-' + (type==='error'?'danger':type) + ' border-0 mb-2';
+      t.role = 'status';
+      t.innerHTML = '<div class="d-flex p-2"><div class="toast-body">'+msg+'</div><button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button></div>';
+      cont.appendChild(t);
+      const bs = new bootstrap.Toast(t, { delay: 3500 });
+      bs.show();
+      t.addEventListener('hidden.bs.toast', ()=> t.remove());
+    };
+
+    // Theme toggle
+    const themeToggle = $('theme-toggle');
+    const root = document.documentElement;
+    const applyTheme = (dark) => document.body.classList.toggle('dark', dark);
+    const saved = localStorage.getItem('tiangui-theme') === 'dark';
+    applyTheme(saved);
+    themeToggle.addEventListener('click', () => {
+      const isDark = !document.body.classList.contains('dark');
+      applyTheme(isDark);
+      localStorage.setItem('tiangui-theme', isDark ? 'dark' : 'light');
+    });
+
+    // Populate selects (simulación; reemplazar con fetch a API)
+    const fillSelect = (id, items) => {
+      const s = $(id);
+      items.forEach(it => s.insertAdjacentHTML('beforeend', `<option value="${it.id}">${it.nombre}</option>`));
+    };
+    // Ejemplo: deberías cargar desde tu backend
+    fillSelect('categoria_id', [{id:1,nombre:'Electrónica'},{id:2,nombre:'Hogar'}]);
+    fillSelect('marca_id', [{id:1,nombre:'Marca A'},{id:2,nombre:'Marca B'}]);
+
+    // Drag & Drop + preview imágenes
+    const dropzone = $('dropzone');
+    const fileInput = $('imagenes');
+    const previewBox = $('preview-imagenes');
+    const maxSize = 5 * 1024 * 1024;
+    const images = [];
+
+    const renderPreviews = () => {
+      previewBox.innerHTML = '';
+      images.forEach((f, i) => {
+        const url = URL.createObjectURL(f);
+        const wrap = document.createElement('div');
+        wrap.className = 'position-relative';
+        wrap.innerHTML = `<img class="thumb" src="${url}" alt="img-${i}"> 
+          <button type="button" class="btn btn-sm btn-danger position-absolute top-0 end-0" data-index="${i}" title="Eliminar" style="transform:translate(30%,-30%);"><i class="fa fa-times"></i></button>`;
+        previewBox.appendChild(wrap);
+        wrap.querySelector('button').addEventListener('click', e => {
+          const idx = +e.currentTarget.dataset.index;
+          images.splice(idx,1);
+          renderPreviews();
+        });
+      });
+    };
+
+    const handleFiles = (fileList) => {
+      for (const f of fileList) {
+        if (!f.type.startsWith('image/')) continue;
+        if (f.size > maxSize) { toast(`"${f.name}" supera 5 MB`, 'error'); continue; }
+        if (images.length >= 8) { toast('Límite de 8 imágenes.', 'error'); break; }
+        images.push(f);
+      }
+      renderPreviews();
+    };
+
+    ['dragenter','dragover'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.add('dragover'); }));
+    ['dragleave','drop'].forEach(evt => dropzone.addEventListener(evt, e => { e.preventDefault(); dropzone.classList.remove('dragover'); }));
+    dropzone.addEventListener('drop', e => handleFiles(e.dataTransfer.files));
+    dropzone.addEventListener('click', () => fileInput.click());
+    $('btn-file-select').addEventListener('click', () => fileInput.click());
+    fileInput.addEventListener('change', e => handleFiles(e.target.files));
+
+    // Modelo 3D preview
+    const modeloInput = $('modelo3d');
+    const modeloPreview = $('preview-modelo3d');
+    modeloInput.addEventListener('change', () => {
+      modeloPreview.innerHTML = '';
+      const f = modeloInput.files[0];
+      if (!f) return;
+      const url = URL.createObjectURL(f);
+      const mv = document.createElement('model-viewer');
+      mv.setAttribute('src', url);
+      mv.setAttribute('camera-controls', '');
+      mv.setAttribute('auto-rotate', '');
+      mv.style.width = '100%';
+      mv.style.height = '320px';
+      mv.style.borderRadius = '.5rem';
+      mv.style.background = 'transparent';
+      modeloPreview.appendChild(mv);
+    });
+
+    // Form submit
+    const form = $('form-agregar-producto');
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      // simple front validation
+      let ok = true;
+      form.querySelectorAll('[required]').forEach(el => {
+        const err = document.querySelector('.fv-error[data-for="'+el.id+'"]');
+        if (!el.value || (el.type === 'number' && isNaN(Number(el.value)))) {
+          ok = false;
+          if (err) err.textContent = 'Campo obligatorio';
+        } else if (err) err.textContent = '';
+      });
+      if (!ok) { toast('Hay campos requeridos sin completar.', 'error'); return; }
+
+      const fd = new FormData();
+      ['nombre','descripcion','precio','stock','categoria_id','marca_id','tipo_pago','publicado'].forEach(k => {
+        const el = form.elements[k];
+        if (!el) return;
+        if (el.type === 'checkbox') fd.append(k, el.checked ? '1' : '0');
+        else fd.append(k, el.value);
+      });
+      images.forEach((f, i) => fd.append('imagenes[]', f));
+      if (modeloInput.files[0]) fd.append('modelo3d', modeloInput.files[0]);
+
+      try {
+        // Cambiar la URL a tu endpoint real
+        const res = await fetch('/api/productos', { method:'POST', body: fd });
+        if (!res.ok) throw new Error('Error en servidor');
+        const data = await res.json();
+        toast('Producto guardado correctamente', 'success');
+        form.reset();
+        images.length = 0;
+        renderPreviews();
+        modeloPreview.innerHTML = '';
+      } catch (err) {
+        toast('No se pudo guardar. ' + (err.message || ''), 'error');
+        console.error(err);
+      }
+    });
+  </script>
 </body>
 </html>

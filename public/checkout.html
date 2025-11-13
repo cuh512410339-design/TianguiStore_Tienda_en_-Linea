@@ -16,71 +16,131 @@
   <link rel="stylesheet" href="estilo/main.css" />
 </head>
 
-<body class="grey darken-4 white-text">
+<body class="page-bg">
 
   <!-- Navbar dinámico -->
   <div id="navbar-container"></div>
 
   <!-- Contenido principal -->
-  <main class="container py-5">
-    <header class="center-align mb-4">
-      <h1 class="teal-text text-lighten-2">
-        <i class="fas fa-map-marker-alt me-2"></i> Confirmación de Pedido
-      </h1>
-      <p class="flow-text grey-text text-lighten-1">
-        Ingresa los datos necesarios para completar tu compra.
-      </p>
-    </header>
+  <main class="container checkout-container">
+    <div class="row valign-wrapper top-gap">
+      <div class="col s12 m8">
+        <div class="card-panel glass-card">
+          <div class="step-header">
+            <div class="step active">1</div>
+            <div class="step-label">Dirección</div>
+            <div class="line"></div>
+            <div class="step">2</div>
+            <div class="step-label">Pago</div>
+            <div class="line"></div>
+            <div class="step">3</div>
+            <div class="step-label">Confirmar</div>
+          </div>
 
-    <section class="row">
-      <div class="col s12 m10 offset-m1 l8 offset-l2">
-        <div class="formulario-wrapper glass-card">
-          <h2 class="intro-title">
-            <i class="fas fa-truck"></i> Dirección de Envío
-          </h2>
+          <h4 class="section-title"><i class="fas fa-truck-fast"></i> Detalles de envío</h4>
 
-          <form id="form-envio" autocomplete="on" novalidate>
+          <form id="form-envio" class="checkout-form" autocomplete="on" novalidate>
+            <div class="row">
+              <div class="input-field col s12">
+                <input id="nombre" name="nombre" type="text" class="validate" required maxlength="80" autocomplete="name">
+                <label for="nombre">Nombre completo</label>
+              </div>
 
-            <!-- Dirección -->
-            <div class="input-field">
-              <input id="direccion_entrega" name="direccion_entrega" type="text" class="validate white-text" required autocomplete="street-address" maxlength="255">
-              <label for="direccion_entrega">📍 Dirección completa</label>
+              <div class="input-field col s12">
+                <input id="telefono" name="telefono" type="tel" class="validate" required maxlength="20" autocomplete="tel">
+                <label for="telefono">Teléfono de contacto</label>
+              </div>
+
+              <div class="input-field col s12">
+                <input id="direccion_entrega" name="direccion_entrega" type="text" class="validate" required autocomplete="street-address" maxlength="255">
+                <label for="direccion_entrega">📍 Dirección completa</label>
+              </div>
+
+              <div class="input-field col s12 m6">
+                <input id="ciudad" name="ciudad" type="text" class="validate" required maxlength="60">
+                <label for="ciudad">Ciudad</label>
+              </div>
+
+              <div class="input-field col s12 m6">
+                <input id="codigo_postal" name="codigo_postal" type="text" class="validate" maxlength="12" autocomplete="postal-code">
+                <label for="codigo_postal">Código postal</label>
+              </div>
+
+              <div class="input-field col s12">
+                <select id="metodo_pago" name="metodo_pago" class="browser-default select-styled" required>
+                  <option value="" disabled selected>💳 Selecciona un método de pago</option>
+                  <option value="efectivo">Efectivo</option>
+                  <option value="tarjeta">Tarjeta de Crédito/Débito</option>
+                  <option value="transferencia">Transferencia Bancaria</option>
+                </select>
+              </div>
+
+              <div class="input-field col s12">
+                <input id="cupon" name="cupon" type="text" maxlength="30" placeholder="Código promocional (opcional)">
+                <label for="cupon">🎟️ Código de cupón</label>
+              </div>
+
+              <div class="input-field col s12">
+                <textarea id="comentarios" name="comentarios" class="materialize-textarea" maxlength="300" placeholder="Instrucciones especiales"></textarea>
+                <label for="comentarios">📝 Comentarios</label>
+              </div>
             </div>
 
-
-            <!-- Método de Pago -->
-            <div class="input-field">
-              <select id="metodo_pago" name="metodo_pago" class="browser-default white-text grey darken-4" required>
-                <option value="" disabled selected>💳 Selecciona un método de pago</option>
-                <option value="efectivo">Efectivo</option>
-                <option value="tarjeta">Tarjeta de Crédito/Débito</option>
-                <option value="transferencia">Transferencia Bancaria</option>
-              </select>
-              <span class="helper-text amber-text text-lighten-3"></span>
+            <div class="row mb-0">
+              <div class="col s12">
+                <button type="submit" class="btn-primary full-width">
+                  <i class="material-icons left">check_circle</i> Confirmar pedido
+                </button>
+              </div>
             </div>
-
-            <!-- Cupón -->
-            <div class="input-field">
-              <input id="cupon" name="cupon" type="text" class="validate white-text" maxlength="30" placeholder="Descuento promocional (opcional)">
-              <label for="cupon">🎟️ Código de cupón</label>
-              <span class="helper-text grey-text text-lighten-1">Máximo 30 caracteres</span>
-            </div>
-
-            <!-- Comentarios -->
-            <div class="input-field">
-              <textarea id="comentarios" name="comentarios" class="materialize-textarea white-text" maxlength="300" placeholder="Instrucciones especiales, referencias o avisos."></textarea>
-              <label for="comentarios">📝 Comentarios adicionales</label>
-              <span class="helper-text grey-text text-lighten-1">Opcional</span>
-            </div>
-
-            <!-- Botón -->
-            <button type="submit" class="btn waves-effect teal darken-1 full-width">
-              <i class="material-icons left">check_circle</i> Realizar Pedido
-            </button>
           </form>
         </div>
       </div>
-    </section>
+
+      <div class="col s12 m4">
+        <aside class="card-panel summary-card">
+          <h5 class="summary-title"><i class="fas fa-receipt"></i> Resumen del pedido</h5>
+
+          <div id="order-items" class="order-items">
+            <!-- Placeholder dinámico para los productos del carrito -->
+            <div class="order-item">
+              <div class="item-info">
+                <span class="item-name">Nombre del producto A</span>
+                <span class="item-qty">x1</span>
+              </div>
+              <div class="item-price">$199.00</div>
+            </div>
+            <div class="order-item">
+              <div class="item-info">
+                <span class="item-name">Nombre del producto B</span>
+                <span class="item-qty">x2</span>
+              </div>
+              <div class="item-price">$398.00</div>
+            </div>
+          </div>
+
+          <div class="summary-totals">
+            <div class="tot-line">
+              <span>Subtotal</span>
+              <span id="subtotal">$597.00</span>
+            </div>
+            <div class="tot-line">
+              <span>Envío</span>
+              <span id="envio">$50.00</span>
+            </div>
+            <div class="tot-line total">
+              <span>Total</span>
+              <span id="total">$647.00</span>
+            </div>
+          </div>
+
+          <div class="summary-actions">
+            <button id="apply-coupon" class="btn-flat">Aplicar cupón</button>
+            <button id="edit-cart" class="btn-flat">Editar carrito</button>
+          </div>
+        </aside>
+      </div>
+    </div>
   </main>
 
   <!-- Footer dinámico -->

@@ -12,75 +12,181 @@
   <!-- FontAwesome -->
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
 
-  <!-- Estilos personalizados -->
-  <link rel="stylesheet" href="estilo/main.css" />
+  <!-- Estilos personalizados (nuevo archivo sugerido: estilo/carrito.css) -->
+  <link rel="stylesheet" href="estilo/carrito.css" />
+
+  <style>
+    /* Estilos mínimos integrados para preview rápido */
+    :root { --teal: #00796b; --muted: #9e9e9e; }
+    body { background: linear-gradient(180deg,#f7f9fb,#ffffff); color: #263238; }
+    .glass-card { background: rgba(255,255,255,0.85); border-radius: 12px; padding: 1rem; }
+    .product-card { display:flex; gap:1rem; align-items:center; padding:0.75rem; }
+    .product-card img { width:96px; height:96px; object-fit:cover; border-radius:8px; }
+    .qty-input { width:64px; }
+    .sticky-summary { position: sticky; top: 1.5rem; }
+    .empty-state { padding:2rem 1rem; color:var(--muted); }
+    .theme-toggle { cursor:pointer; }
+    @media (max-width: 600px) { .product-card img { width:72px; height:72px; } }
+  </style>
 </head>
 
-<body class="dark">
+<body>
+  <!-- Navbar compacto con toggle de tema -->
+  <nav class="white z-depth-1">
+    <div class="nav-wrapper container">
+      <a href="index.html" class="brand-logo teal-text" style="font-weight:600;">
+        <i class="fas fa-store-alt"></i> TianguiStore
+      </a>
+      <ul id="nav-mobile" class="right">
+        <li><a class="theme-toggle" id="toggleTheme" title="Alternar tema"><i class="fas fa-moon"></i></a></li>
+      </ul>
+    </div>
+  </nav>
 
-  <!-- 🔝 Navbar -->
-  <div id="navbar-container"></div>
-
-  <!-- 🛒 Contenido principal -->
   <main class="container section">
-    <header class="center-align">
-      <h1 class="teal-text text-lighten-2">
-        <i class="fas fa-shopping-basket"></i> Tu Carrito
-      </h1>
-      <p class="grey-text text-lighten-1">Revisa y confirma tus productos antes de pagar.</p>
+    <header class="row valign-wrapper" style="margin-bottom:0.5rem;">
+      <div class="col s12 m8">
+        <h1 class="teal-text text-darken-1" style="margin:0;">
+          <i class="fas fa-shopping-basket"></i> Tu Carrito
+        </h1>
+        <p class="grey-text text-darken-1" style="margin:0.25rem 0 0 0;">Revisa, ajusta cantidades y finaliza tu compra.</p>
+      </div>
+      <div class="col s12 m4 right-align hide-on-small-only">
+        <a class="btn-flat" href="index.html"><i class="fas fa-arrow-left"></i> Seguir Comprando</a>
+      </div>
     </header>
 
     <div class="row">
-      <!-- 🧾 Lista de productos -->
-      <section class="col s12 m7 l8" aria-labelledby="titulo-carrito">
-        <div class="card-panel glass-card z-depth-1">
-          <h2 id="titulo-carrito" class="teal-text text-lighten-3">
-            <i class="fas fa-box-open"></i> Productos en Carrito
-          </h2>
+      <!-- Lista de productos (principal) -->
+      <section class="col s12 m7">
+        <div class="glass-card z-depth-1">
+          <h5 class="teal-text text-darken-1"><i class="fas fa-box-open"></i> Productos</h5>
+
+          <!-- Plantilla de producto — el JS rellenará este ul -->
           <ul id="lista-carrito" class="collection">
-            <li id="carrito-vacio" class="collection-item center-align grey-text text-lighten-2">
-              <i class="fas fa-box"></i><br>Tu carrito está vacío.
+            <li id="carrito-vacio" class="collection-item empty-state center-align">
+              <i class="fas fa-box-open fa-2x"></i>
+              <p style="margin-top:0.5rem;">Tu carrito está vacío. Añade productos desde la tienda.</p>
+              <a href="index.html" class="btn teal darken-1" style="margin-top:0.5rem;">Ir a la Tienda</a>
             </li>
           </ul>
+
+          <!-- Acciones rápidas -->
+          <div class="row" style="margin-top:1rem;">
+            <div class="col s12 m6">
+              <button id="vaciar-carrito" class="btn red lighten-1 full-width"><i class="fas fa-trash-alt left"></i> Vaciar</button>
+            </div>
+            <div class="col s12 m6">
+              <button id="guardar-para-luego" class="btn grey lighten-2 black-text full-width"><i class="fas fa-bookmark left"></i> Guardar para después</button>
+            </div>
+          </div>
         </div>
       </section>
 
-      <!-- 📋 Resumen del pedido -->
-      <aside class="col s12 m5 l4" aria-labelledby="titulo-resumen">
-        <div class="card-panel glass-card z-depth-1">
-          <h2 id="titulo-resumen" class="teal-text text-lighten-3">
-            <i class="fas fa-receipt"></i> Resumen del Pedido
-          </h2>
-
-          <ul class="striped white-text">
-            <li>Subtotal <span class="right" id="resumen-subtotal">$0.00</span></li>
-            <li>IVA (16%) <span class="right" id="resumen-iva">$0.00</span></li>
-            <li><strong>Total</strong> <span class="right teal-text text-accent-1" id="total_etiqueta">$0.00</span></li>
-          </ul>
+      <!-- Resumen (sticky) -->
+      <aside class="col s12 m5">
+        <div class="glass-card z-depth-1 sticky-summary">
+          <h5 class="teal-text text-darken-1"><i class="fas fa-receipt"></i> Resumen</h5>
 
           <div class="section">
-            <button id="vaciar-carrito" class="btn red darken-2 waves-effect waves-light full-width" style="margin-bottom: 1rem;">
-              <i class="fas fa-trash-alt left"></i> Vaciar Carrito
-            </button>
-            <button id="btnRealizarPedido" class="btn teal darken-1 waves-effect waves-light full-width" style="margin-bottom: 1rem;">
-              <i class="fas fa-credit-card left"></i> Proceder al Pago
-            </button>
-            <a href="index.html" class="btn grey lighten-2 black-text waves-effect full-width">
-              <i class="fas fa-arrow-left left"></i> Seguir Comprando
-            </a>
+            <div class="row" style="margin-bottom:.25rem;">
+              <div class="col s6">Subtotal</div>
+              <div class="col s6 right-align" id="resumen-subtotal">$0.00</div>
+            </div>
+            <div class="row" style="margin-bottom:.25rem;">
+              <div class="col s6">IVA (16%)</div>
+              <div class="col s6 right-align" id="resumen-iva">$0.00</div>
+            </div>
+            <div class="row" style="margin-bottom:.25rem; font-weight:700;">
+              <div class="col s6">Total</div>
+              <div class="col s6 right-align teal-text text-darken-1" id="total_etiqueta">$0.00</div>
+            </div>
+
+            <div class="input-field" style="margin-top:0.5rem;">
+              <input id="codigo-descuento" type="text" placeholder="Código promo">
+              <label for="codigo-descuento">Cupón</label>
+              <button id="aplicar-cupon" class="btn-small teal darken-1" style="margin-top:0.5rem;">Aplicar</button>
+            </div>
+
+            <p class="grey-text small">Envío calculado al finalizar.</p>
+          </div>
+
+          <div class="section">
+            <button id="btnRealizarPedido" class="btn-large teal darken-1 full-width"><i class="fas fa-credit-card left"></i> Proceder al Pago</button>
+            <button id="pagar-express" class="btn-flat full-width" style="margin-top:.5rem;"><i class="fas fa-bolt"></i> Pagar con PayPal / Express</button>
           </div>
         </div>
       </aside>
     </div>
   </main>
 
-  <!-- ✅ Toasts -->
-  <div id="toast-container" class="fixed-action-btn" style="bottom: 1rem; right: 1rem;"></div>
-
-  <!-- 🔚 Footer -->
-  <div id="footer-container"></div>
+  <!-- Footer compacto -->
+  <footer class="page-footer white" style="padding:1rem 0; border-top:1px solid #eee;">
+    <div class="container">
+      <div class="row">
+        <div class="col s12 m6">
+          <span class="grey-text">© TianguiStore • Soporte: soporte@tianguistore.example</span>
+        </div>
+        <div class="col s12 m6 right-align hide-on-small-only">
+          <a class="grey-text text-darken-1" href="#">Términos</a> ·
+          <a class="grey-text text-darken-1" href="#">Ayuda</a>
+        </div>
+      </div>
+    </div>
+  </footer>
 
   <!-- Scripts -->
+  <script>
+    // Pequeñas mejoras de UI (preview)
+    document.addEventListener('DOMContentLoaded', function () {
+      // Toggle tema simple
+      const toggle = document.getElementById('toggleTheme');
+      toggle.addEventListener('click', () => {
+        document.body.classList.toggle('dark');
+        toggle.innerHTML = document.body.classList.contains('dark') ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
+      });
+
+      // Demo: vigilar lista vacía (puedes reemplazar con tu carrito.js)
+      const lista = document.getElementById('lista-carrito');
+      // ejemplo: si hay productos en localStorage rellenar la lista
+      const cart = JSON.parse(localStorage.getItem('cart') || '[]');
+      const emptyItem = document.getElementById('carrito-vacio');
+      if (cart.length) {
+        emptyItem?.remove();
+        cart.forEach(p => {
+          const li = document.createElement('li');
+          li.className = 'collection-item';
+          li.innerHTML = `
+            <div class="product-card">
+              <img src="${p.image || 'https://via.placeholder.com/96'}" alt="${p.name}">
+              <div style="flex:1;">
+                <div style="font-weight:600">${p.name}</div>
+                <div class="grey-text small">${p.variant || ''}</div>
+                <div style="margin-top:.5rem;">
+                  <input class="qty-input" type="number" min="1" value="${p.qty || 1}">
+                  <span class="right" style="font-weight:700;">$${(p.price || 0).toFixed(2)}</span>
+                </div>
+              </div>
+              <a class="btn-flat red-text remove-item" title="Eliminar"><i class="fas fa-trash"></i></a>
+            </div>
+          `;
+          lista.appendChild(li);
+        });
+      }
+      // calcular totales (demo)
+      function calcTotals() {
+        const items = JSON.parse(localStorage.getItem('cart') || '[]');
+        let subtotal = 0;
+        items.forEach(i => subtotal += (i.price||0) * (i.qty||1));
+        const iva = subtotal * 0.16;
+        document.getElementById('resumen-subtotal').textContent = `$${subtotal.toFixed(2)}`;
+        document.getElementById('resumen-iva').textContent = `$${iva.toFixed(2)}`;
+        document.getElementById('total_etiqueta').textContent = `$${(subtotal + iva).toFixed(2)}`;
+      }
+      calcTotals();
+    });
+  </script>
+
   <script src="scripts/loadComponent.js" defer></script>
   <script src="scripts/carrito.js" defer></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>

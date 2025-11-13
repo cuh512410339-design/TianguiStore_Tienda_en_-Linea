@@ -4,42 +4,69 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>404 - Página no encontrada | TianguiStore</title>
+  <title>404 • Página no encontrada — TianguiStore</title>
 
-  <!-- MaterializeCSS -->
+  <!-- MaterializeCSS (opcional) -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" crossorigin="anonymous" />
-  <!-- FontAwesome -->
+  <!-- Iconos -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" />
-  <!-- Animate.css -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" crossorigin="anonymous" />
   <!-- Estilos personalizados -->
   <link rel="stylesheet" href="estilo/main.css" />
+
+  <meta name="robots" content="noindex, nofollow">
 </head>
+<body class="page-404">
 
-<body class="grey darken-4 white-text d-flex flex-column min-vh-100">
+  <!-- header cargado dinámicamente -->
+  <div data-include="header.html" class="site-header"></div>
 
-  <main class="container center-align animate__animated animate__fadeIn" role="main" aria-labelledby="error-title" style="padding-top: 10vh;">
-    <i class="fas fa-exclamation-triangle fa-5x amber-text text-accent-3 mb-3" aria-hidden="true"></i>
-    <h1 class="amber-text text-accent-3" id="error-title">404</h1>
-    <h2 class="white-text">Página no encontrada</h2>
-    <p class="grey-text text-lighten-2 flow-text">
-      Lo sentimos, la página que buscas no existe o fue movida.<br>
-      Intenta navegar desde el inicio o usar el menú principal.
-    </p>
+  <main class="container content center-align" role="main" aria-labelledby="error-title">
+    <section class="card-panel large-panel z-depth-2 animate-card" aria-describedby="error-desc">
+      <div class="illustration" aria-hidden="true">
+        <i class="fa-solid fa-compass-drafting fa-6x accent"></i>
+      </div>
 
-    <a href="/index.html" class="btn-large teal lighten-1 waves-effect waves-light mt-3" aria-label="Volver al inicio">
-      <i class="fas fa-home left"></i> Ir al inicio
-    </a>
+      <h1 id="error-title" class="big">404</h1>
+      <h2 class="muted">Página no encontrada</h2>
+
+      <p id="error-desc" class="lead">
+        Lo sentimos — la página que buscas no existe o fue movida.
+      </p>
+
+      <div class="actions">
+        <a href="/index.html" class="btn-primary" aria-label="Volver al inicio">
+          <i class="fa-solid fa-house"></i> Ir al inicio
+        </a>
+
+        <a href="javascript:history.back()" class="btn-secondary" aria-label="Volver atrás">
+          <i class="fa-solid fa-arrow-left"></i> Volver
+        </a>
+      </div>
+
+      <form class="search-form" action="/search.html" method="get" role="search" aria-label="Buscar en el sitio">
+        <input name="q" type="search" placeholder="Buscar productos, categorías..." aria-label="Buscar" />
+        <button type="submit" class="btn-outline">Buscar</button>
+      </form>
+    </section>
   </main>
 
-  <!-- Footer opcional -->
-  <footer class="page-footer grey darken-3 mt-auto">
-    <div class="container center-align">
-      <small class="grey-text text-lighten-1">TianguiStore © 2025</small>
-    </div>
-  </footer>
+  <!-- footer cargado dinámicamente -->
+  <div data-include="footer.html" class="site-footer"></div>
 
   <!-- Scripts -->
+  <script>
+    // Cargar header/footer simples (coloca header.html y footer.html en la misma carpeta pública)
+    (function loadPartials(){
+      document.querySelectorAll('[data-include]').forEach(async el => {
+        const path = el.getAttribute('data-include');
+        try {
+          const resp = await fetch(path);
+          if (resp.ok) el.innerHTML = await resp.text();
+        } catch (e) { /* fallar silenciosamente */ }
+      });
+    })();
+  </script>
+
   <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js" defer></script>
 </body>
 </html>
