@@ -4,14 +4,10 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "test:html": "htmlhint 'public/**/*.html'",
- 
-  "test:css": "stylelint 'public/**/*.css'",
- 
-  "test:js": "eslint 'backend/**/*.js' 'public/js/**/*.js'",
-  
-  "test": "npm run test:html && npm run test:css && npm run test:js"
+    "test:css": "stylelint 'public/**/*.css'",
+    "test:js": "eslint 'backend/**/*.js' 'public/js/**/*.js'",
+    "test": "npm run test:html && npm run test:css && npm run test:js"
   },
   "keywords": [],
   "author": "",
